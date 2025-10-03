@@ -1,0 +1,14 @@
+langchain>=0.2.10
+langchain-openai>=0.1.19
+langgraph>=0.2.8
+langsmith>=0.2.2
+langchain-community>=0.2.10
+qdrant-client>=1.9.0
+python-dotenv>=1.0.1
+pydantic>=2.8.2
+streamlit>=1.36.0
+requests>=2.32.3
+pypdf>=4.2.0
+pytest>=8.3.3
+responses>=0.25.6
+langchain-qdrant>=0.1.0
