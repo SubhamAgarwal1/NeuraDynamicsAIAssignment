@@ -1,4 +1,3 @@
-
 """
 RAG ingestion and retrieval utilities backed by Qdrant.
 """
@@ -55,6 +54,7 @@ class VectorStoreManager:
         return self._vector_store
 
     def _reset_client(self) -> None:
+        """Close and drop the cached client so a fresh connection can be created."""
         if self._client is not None:
             try:
                 self._client.close()
@@ -64,6 +64,7 @@ class VectorStoreManager:
                 self._client = None
 
     def ingest_documents(self, documents: Iterable[Document]) -> None:
+        """Store documents in the collection, creating it first when necessary."""
         docs: List[Document] = list(documents)
         if not docs:
             LOGGER.warning("No documents supplied for ingestion")
@@ -83,6 +84,7 @@ class VectorStoreManager:
             self._vector_store.add_documents(docs)
 
     def similarity_search(self, query: str, k: int = 4) -> List[Document]:
+        """Return the top-k most similar documents for the given query."""
         return self.vector_store.similarity_search(query, k=k)
 
 
@@ -109,7 +111,7 @@ class RAGService:
         self.ingestor = ingestor or PDFIngestor()
 
     def ensure_ingested(self) -> None:
-        """Loads the configured PDF and ingests it if the collection is empty."""
+        """Loads the configured PDF and ingests it if the collection is empty or missing."""
         try:
             count = self.vector_manager.client.count(
                 collection_name=self.settings.qdrant_collection,
@@ -125,6 +127,7 @@ class RAGService:
         self.vector_manager.ingest_documents(documents)
 
     def retrieve(self, query: str, k: int = 4) -> List[Document]:
+        """Perform a similarity search after ensuring the knowledge base exists."""
         return self.vector_manager.similarity_search(query, k=k)
 
 

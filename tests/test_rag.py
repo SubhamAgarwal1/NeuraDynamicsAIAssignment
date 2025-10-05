@@ -6,6 +6,7 @@ from langchain_core.embeddings import Embeddings
 
 from ai_pipeline.config import Settings
 from ai_pipeline.rag import RAGService, VectorStoreManager
+from ai_pipeline.testing_utils import describe_test
 
 
 class SimpleEmbeddings(Embeddings):
@@ -35,7 +36,12 @@ def build_test_settings(tmp_path: Path) -> Settings:
     )
 
 
+@describe_test(
+    purpose="Validates that VectorStoreManager ingests documents and surfaces the most relevant match for a query.",
+    targets=[VectorStoreManager, VectorStoreManager.ingest_documents, VectorStoreManager.similarity_search],
+)
 def test_vector_store_similarity_search(tmp_path: Path):
+    """Ingest two documents into a temporary Qdrant store and confirm similarity search returns the LangGraph snippet."""
     settings = build_test_settings(tmp_path)
     embeddings = SimpleEmbeddings()
     vector_manager = VectorStoreManager(settings=settings, embeddings=embeddings)
@@ -52,7 +58,13 @@ def test_vector_store_similarity_search(tmp_path: Path):
     assert "LangGraph" in results[0].page_content
 
 
+@describe_test(
+    purpose="Ensures RAGService detects an empty collection and triggers PDF ingestion before serving queries.",
+    targets=[RAGService, RAGService.ensure_ingested, VectorStoreManager.ingest_documents],
+    notes="Monkeypatches the Qdrant client to simulate a missing collection so ingestion is forcefully executed.",
+)
 def test_rag_service_ensure_ingested_triggers_loader(monkeypatch, tmp_path: Path):
+    """Fake a missing Qdrant collection and check that ensure_ingested loads and adds documents."""
     settings = build_test_settings(tmp_path)
     embeddings = SimpleEmbeddings()
     vector_manager = VectorStoreManager(settings=settings, embeddings=embeddings)

@@ -99,3 +99,13 @@ Record a short Loom video showing:
 - **PDF ingestion:** The first document query triggers ingestion if the collection is empty. For large PDFs, allow extra time for embedding generation.
 
 Happy building!
+
+### Test Reporting
+Run all tests and emit an explainer report (including code references and skip notes) with:
+```bash
+python generate_test_report.py
+```
+You can pass additional pytest flags after the script name, for example:
+```bash
+python generate_test_report.py -- -k weather
+```

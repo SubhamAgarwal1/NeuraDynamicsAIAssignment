@@ -1,13 +1,17 @@
-import json
-
 import pytest
 import responses
 
+from ai_pipeline.testing_utils import describe_test
 from ai_pipeline.weather import WeatherService
 
 
+@describe_test(
+    purpose="Confirms WeatherService hits OpenWeatherMap and normalises the JSON payload into a WeatherResult instance.",
+    targets=[WeatherService, WeatherService.fetch_weather],
+)
 @responses.activate
 def test_weather_service_fetch_weather_success():
+    """Simulate a successful API call and ensure the returned WeatherResult preserves key fields."""
     api_key = "test-key"
     service = WeatherService(api_key=api_key, base_url="https://api.openweathermap.org/data/2.5/weather")
     payload = {
