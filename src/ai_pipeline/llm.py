@@ -11,7 +11,7 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from .config import Settings
 
-DEFAULT_CHAT_MODEL = "gpt-4o-mini"
+DEFAULT_CHAT_MODEL = "gpt-5-nano"
 DEFAULT_EMBED_MODEL = "text-embedding-3-small"
 
 
